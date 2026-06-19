@@ -1,12 +1,9 @@
 /**
- * Renderização de componentes HTML
+ * HTML rendering components
  */
 import Utils from './utils.js';
 
 const Renderer = {
-  /**
-   * Renderizar grid de project cards
-   */
   renderProjects(projects, container) {
     if (!container) return;
 
@@ -14,8 +11,8 @@ const Renderer = {
       container.innerHTML = `
         <div class="empty-state fade-in">
           <div class="empty-state__icon">🔍</div>
-          <div class="empty-state__text">Nenhum projeto encontrado</div>
-          <div class="empty-state__sub">Tenta alterar os filtros ou a pesquisa</div>
+          <div class="empty-state__text">No projects found</div>
+          <div class="empty-state__sub">Try changing the filters or search query</div>
         </div>
       `;
       return;
@@ -24,24 +21,19 @@ const Renderer = {
     container.innerHTML = projects.map(project => this.renderCard(project)).join('');
   },
 
-  /**
-   * Renderizar um project card individual
-   */
   renderCard(project) {
     const catIcon = Utils.getCategoryIcon(project.category);
     const catLabel = Utils.getCategoryLabel(project.category);
     const statusClass = `project-card__status--${project.status}`;
     const statusLabel = Utils.getStatusLabel(project.status);
 
-    // Thumbnail ou placeholder
     const thumbnail = project.thumbnail
       ? `<img src="${Utils.escapeHTML(project.thumbnail)}" alt="${Utils.escapeHTML(project.title)}" loading="lazy">`
       : `<div class="project-card__placeholder">${project.title.charAt(0).toUpperCase()}</div>`;
 
-    // Tags
-    const tagsHtml = project.tags
-      .map(tag => `<span class="project-card__tag">${Utils.escapeHTML(tag)}</span>`)
-      .join('');
+    const tagsHtml = project.tags && project.tags.length > 0
+      ? project.tags.map(tag => `<span class="project-card__tag">${Utils.escapeHTML(tag)}</span>`).join('')
+      : '';
 
     return `
       <article class="project-card fade-in" data-id="${Utils.escapeHTML(project.id)}">
@@ -65,40 +57,32 @@ const Renderer = {
     `;
   },
 
-  /**
-   * Renderizar página de detalhes de um projeto
-   */
   renderDetail(project) {
     const catIcon = Utils.getCategoryIcon(project.category);
     const catLabel = Utils.getCategoryLabel(project.category);
     const statusLabel = Utils.getStatusLabel(project.status);
 
-    // Thumbnail
     const thumbnail = project.thumbnail
       ? `<img src="${Utils.escapeHTML(project.thumbnail)}" alt="${Utils.escapeHTML(project.title)}" class="project-detail__image">`
       : '';
 
-    // Tags
-    const tagsHtml = project.tags
-      .map(tag => `<span class="project-card__tag">${Utils.escapeHTML(tag)}</span>`)
-      .join('');
+    const tagsHtml = project.tags && project.tags.length > 0
+      ? project.tags.map(tag => `<span class="project-card__tag">${Utils.escapeHTML(tag)}</span>`).join('')
+      : '';
 
-    // Descrição (Markdown simples)
     const descHtml = this.parseMarkdown(project.longDescription || project.description);
 
-    // Links
     let actionsHtml = '';
     if (project.links.demo) {
-      actionsHtml += `<a href="${Utils.escapeHTML(project.links.demo)}" target="_blank" rel="noopener" class="btn btn--primary"><i class="fa-solid fa-rocket"></i> Abrir Demo</a>`;
+      actionsHtml += `<a href="${Utils.escapeHTML(project.links.demo)}" target="_blank" rel="noopener" class="btn btn--primary"><i class="fa-solid fa-rocket"></i> Open Demo</a>`;
     }
     if (project.links.source) {
-      actionsHtml += `<a href="${Utils.escapeHTML(project.links.source)}" target="_blank" rel="noopener" class="btn btn--secondary"><i class="fa-brands fa-github"></i> Código Fonte</a>`;
+      actionsHtml += `<a href="${Utils.escapeHTML(project.links.source)}" target="_blank" rel="noopener" class="btn btn--secondary"><i class="fa-brands fa-github"></i> Source Code</a>`;
     }
     if (project.links.video) {
-      actionsHtml += `<a href="${Utils.escapeHTML(project.links.video)}" target="_blank" rel="noopener" class="btn btn--secondary"><i class="fa-brands fa-youtube"></i> Ver Vídeo</a>`;
+      actionsHtml += `<a href="${Utils.escapeHTML(project.links.video)}" target="_blank" rel="noopener" class="btn btn--secondary"><i class="fa-brands fa-youtube"></i> Watch Video</a>`;
     }
 
-    // Downloads
     let downloadsHtml = '';
     if (project.downloads && project.downloads.length > 0) {
       downloadsHtml = `
@@ -120,12 +104,11 @@ const Renderer = {
       `;
     }
 
-    // Features
     let featuresHtml = '';
     if (project.features && project.features.length > 0) {
       featuresHtml = `
         <div class="project-detail__section">
-          <h4 class="project-detail__section-title"><i class="fa-solid fa-star"></i> Funcionalidades</h4>
+          <h4 class="project-detail__section-title"><i class="fa-solid fa-star"></i> Features</h4>
           <ul class="features-list">
             ${project.features.map(f => `<li>${Utils.escapeHTML(f)}</li>`).join('')}
           </ul>
@@ -133,12 +116,11 @@ const Renderer = {
       `;
     }
 
-    // Tags sidebar
     let tagsSidebarHtml = '';
-    if (project.tags.length > 0) {
+    if (project.tags && project.tags.length > 0) {
       tagsSidebarHtml = `
         <div class="project-detail__section">
-          <h4 class="project-detail__section-title"><i class="fa-solid fa-tags"></i> Tecnologias</h4>
+          <h4 class="project-detail__section-title"><i class="fa-solid fa-tags"></i> Technologies</h4>
           <div class="project-card__tags">${tagsHtml}</div>
         </div>
       `;
@@ -147,7 +129,7 @@ const Renderer = {
     return `
       <div class="project-detail project-detail--visible fade-in">
         <button class="project-detail__back" id="backBtn">
-          <i class="fa-solid fa-arrow-left"></i> Voltar
+          <i class="fa-solid fa-arrow-left"></i> Back
         </button>
 
         <div class="project-detail__header">
@@ -167,16 +149,16 @@ const Renderer = {
           </div>
           <div class="project-detail__sidebar">
             <div class="project-detail__section">
-              <h4 class="project-detail__section-title"><i class="fa-solid fa-link"></i> Ações</h4>
+              <h4 class="project-detail__section-title"><i class="fa-solid fa-link"></i> Actions</h4>
               <div class="project-actions">
-                ${actionsHtml || '<p style="color: var(--text-muted); font-size: 0.9rem;">Sem links disponíveis</p>'}
+                ${actionsHtml || '<p style="color: var(--text-muted); font-size: 0.9rem;">No links available</p>'}
               </div>
             </div>
             ${downloadsHtml}
             ${featuresHtml}
             ${tagsSidebarHtml}
             <div class="project-detail__section">
-              <h4 class="project-detail__section-title"><i class="fa-solid fa-calendar"></i> Data</h4>
+              <h4 class="project-detail__section-title"><i class="fa-solid fa-calendar"></i> Date</h4>
               <p style="font-size: 0.9rem;">${Utils.formatDate(project.date)}</p>
             </div>
           </div>
@@ -185,45 +167,31 @@ const Renderer = {
     `;
   },
 
-  /**
-   * Parse simplificado de Markdown para HTML
-   */
   parseMarkdown(text) {
     if (!text) return '';
 
     let html = text
-      // Headers
       .replace(/^### (.+)$/gm, '<h3>$1</h3>')
       .replace(/^## (.+)$/gm, '<h2>$1</h2>')
-      // Bold
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-      // Italic
       .replace(/\*(.+?)\*/g, '<em>$1</em>')
-      // Listas
       .replace(/^- (.+)$/gm, '<li>$1</li>')
       .replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>')
-      // Parágrafos (linhas vazias separam parágrafos)
       .replace(/\n\n/g, '</p><p>')
-      // Links
       .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
 
-    // Wrap in <p> if not already wrapped
     if (!html.startsWith('<')) {
       html = '<p>' + html + '</p>';
     }
 
-    // Clean up empty paragraphs
     html = html.replace(/<p>\s*<\/p>/g, '');
 
     return html;
   },
 
-  /**
-   * Atualizar contagem de resultados
-   */
   renderCount(count, total, container) {
     if (!container) return;
-    container.textContent = `${count} de ${total} projetos`;
+    container.textContent = `${count} of ${total} projects`;
   }
 };
 

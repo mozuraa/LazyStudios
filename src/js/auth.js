@@ -1,5 +1,6 @@
 /**
- * Sistema de autenticação e Dashboard de gestão de projetos
+ * Authentication + project management dashboard
+ * Because manual JSON editing is for chumps
  */
 import Utils from './utils.js';
 
@@ -8,11 +9,13 @@ const Dashboard = {
     user: 'admin',
     pass: 'solracleafar1504'
   },
+  // TODO: move this to a backend eventually...
+  // For now this is fine for personal use
   projects: [],
   currentEditId: null,
 
   /**
-   * Inicializar
+   * Initialize everything
    */
   init() {
     this.bindLogin();
@@ -21,10 +24,11 @@ const Dashboard = {
     this.bindAddProjectForm();
     this.bindZipUpload();
     this.bindImportFile();
+    this.showToast('ready', 'Dashboard ready');
   },
 
   /* =============================================
-     AUTENTICAÇÃO
+     AUTHENTICATION
      ============================================= */
   bindLogin() {
     const form = document.getElementById('loginForm');
@@ -46,7 +50,7 @@ const Dashboard = {
       this.showDashboard();
     } else {
       alert.className = 'dash-alert dash-alert--error';
-      alert.textContent = 'Credenciais inválidas. Tenta novamente.';
+      alert.textContent = 'Invalid credentials. Try again.';
     }
   },
 
@@ -58,7 +62,10 @@ const Dashboard = {
 
   bindLogout() {
     const btn = document.getElementById('logoutBtn');
-    if (btn) btn.addEventListener('click', () => this.logout());
+    if (btn) btn.addEventListener('click', () => {
+      this.showToast('info', 'Logged out successfully');
+      this.logout();
+    });
   },
 
   showDashboard() {
@@ -94,11 +101,11 @@ const Dashboard = {
   },
 
   /* =============================================
-     PROJETOS — LISTAR / CARREGAR
+     PROJECTS - LIST / LOAD
      ============================================= */
   async loadProjects() {
     try {
-      // Tenta carregar do projects.json
+      // Try loading from projects.json
       const res = await fetch('src/data/projects.json?t=' + Date.now());
       if (res.ok) {
         this.projects = await res.json();
@@ -106,7 +113,7 @@ const Dashboard = {
         throw new Error('fetch failed');
       }
     } catch {
-      // fallback para localStorage
+      // Fallback to localStorage
       const saved = localStorage.getItem('dash_projects');
       this.projects = saved ? JSON.parse(saved) : [];
     }
@@ -121,7 +128,7 @@ const Dashboard = {
       container.innerHTML = `
         <div class="dash-empty">
           <div class="icon">📭</div>
-          <p>Nenhum projeto. Adiciona o primeiro!</p>
+          <p>No projects yet. Add your first one!</p>
         </div>
       `;
       return;
@@ -134,15 +141,15 @@ const Dashboard = {
           <p>${Utils.escapeHTML(p.subtitle || p.id)} · ${Utils.getCategoryLabel(p.category)}</p>
         </div>
         <div class="actions">
-          <button class="dash-btn dash-btn--ghost" onclick="Dashboard.editProject('${Utils.escapeHTML(p.id)}')">✏️</button>
-          <button class="dash-btn dash-btn--danger" onclick="Dashboard.deleteProject('${Utils.escapeHTML(p.id)}')">🗑️</button>
+          <button class="dash-btn dash-btn--ghost" onclick="Dashboard.editProject('${Utils.escapeHTML(p.id)}')" title="Edit">✏️</button>
+          <button class="dash-btn dash-btn--danger" onclick="Dashboard.deleteProject('${Utils.escapeHTML(p.id)}')" title="Delete">🗑️</button>
         </div>
       </div>
     `).join('');
   },
 
   /* =============================================
-     ADICIONAR / EDITAR PROJETO (FORMULÁRIO)
+     ADD / EDIT PROJECT (FORM)
      ============================================= */
   bindAddProjectForm() {
     const form = document.getElementById('addProjectForm');
@@ -158,7 +165,7 @@ const Dashboard = {
     this.currentEditId = null;
     document.getElementById('addProjectForm').reset();
     document.getElementById('downloadsContainer').innerHTML = '';
-    this.addDownloadField(); // campo vazio por defeito
+    this.addDownloadField(); // empty field by default
     this.switchTab('add');
   },
 
@@ -190,13 +197,22 @@ const Dashboard = {
   },
 
   deleteProject(id) {
-    if (!confirm(`Eliminar projeto "${id}"?`)) return;
+    if (!confirm(`Delete project "${id}"? This cannot be undone.`)) return;
     this.projects = this.projects.filter(p => p.id !== id);
     this.persist();
     this.renderProjectsList();
+    this.showToast('success', `Deleted "${id}"`);
   },
 
-  saveProjectFromForm() {
+  async saveProjectFromForm() {
+    const saveBtn = document.querySelector('#addProjectForm button[type="submit"]');
+    const originalText = saveBtn.textContent;
+    saveBtn.textContent = '⏳ Saving...';
+    saveBtn.disabled = true;
+
+    // Small delay to show loading state (UX thing)
+    await new Promise(r => setTimeout(r, 400));
+
     const raw = {
       id: document.getElementById('projId').value.trim(),
       title: document.getElementById('projTitle').value.trim(),
@@ -216,26 +232,31 @@ const Dashboard = {
     };
 
     if (!raw.id || !raw.title) {
-      alert('ID e Título são obrigatórios.');
+      this.showToast('error', 'ID and Title are required');
+      saveBtn.textContent = originalText;
+      saveBtn.disabled = false;
       return;
     }
 
     if (this.currentEditId) {
       const idx = this.projects.findIndex(p => p.id === this.currentEditId);
       if (idx >= 0) {
-        // Manter thumbnail existente se não for substituído
         raw.thumbnail = this.projects[idx].thumbnail;
         raw.status = this.projects[idx].status || 'active';
         this.projects[idx] = { ...this.projects[idx], ...raw };
+        this.showToast('success', `Updated "${raw.title}"`);
       }
     } else {
       raw.thumbnail = '';
       raw.status = 'active';
       if (this.projects.some(p => p.id === raw.id)) {
-        alert(`Já existe um projeto com o ID "${raw.id}". Usa outro ID.`);
+        this.showToast('error', `Project ID "${raw.id}" already exists`);
+        saveBtn.textContent = originalText;
+        saveBtn.disabled = false;
         return;
       }
       this.projects.push(raw);
+      this.showToast('success', `Created "${raw.title}"`);
     }
 
     this.persist();
@@ -243,7 +264,13 @@ const Dashboard = {
     document.getElementById('addProjectForm').reset();
     document.getElementById('downloadsContainer').innerHTML = '';
     this.addDownloadField();
-    this.switchTab('projects');
+
+    saveBtn.textContent = '✓ Saved!';
+    setTimeout(() => {
+      this.switchTab('projects');
+      saveBtn.textContent = originalText;
+      saveBtn.disabled = false;
+    }, 600);
   },
 
   addDownloadField(data = null) {
@@ -254,7 +281,7 @@ const Dashboard = {
     div.innerHTML = `
       <input type="text" placeholder="Label (ex: APK)" value="${data?.label || ''}" class="dl-label" style="flex:1;background:var(--dash-bg);border:1px solid var(--dash-border);border-radius:0.375rem;padding:0.5rem;color:var(--dash-text);">
       <input type="text" placeholder="URL (ex: /downloads/apps/file.apk)" value="${data?.url || ''}" class="dl-url" style="flex:2;background:var(--dash-bg);border:1px solid var(--dash-border);border-radius:0.375rem;padding:0.5rem;color:var(--dash-text);">
-      <input type="text" placeholder="Tamanho (ex: 4.2 MB)" value="${data?.size || ''}" class="dl-size" style="flex:1;background:var(--dash-bg);border:1px solid var(--dash-border);border-radius:0.375rem;padding:0.5rem;color:var(--dash-text);">
+      <input type="text" placeholder="Size (ex: 4.2 MB)" value="${data?.size || ''}" class="dl-size" style="flex:1;background:var(--dash-bg);border:1px solid var(--dash-border);border-radius:0.375rem;padding:0.5rem;color:var(--dash-text);">
       <button type="button" class="dash-btn dash-btn--danger" onclick="this.parentElement.remove()">✕</button>
     `;
     container.appendChild(div);
@@ -275,7 +302,7 @@ const Dashboard = {
   },
 
   /* =============================================
-     PERSISTÊNCIA (localStorage + download JSON)
+     PERSISTENCE (localStorage + JSON download)
      ============================================= */
   persist() {
     localStorage.setItem('dash_projects', JSON.stringify(this.projects));
@@ -286,9 +313,10 @@ const Dashboard = {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'projects.json';
+    a.download = 'projects-backup.json';
     a.click();
     URL.revokeObjectURL(url);
+    this.showToast('success', 'Exported projects.json');
   },
 
   async bindImportFile() {
@@ -300,13 +328,13 @@ const Dashboard = {
         try {
           const text = await file.text();
           const data = JSON.parse(text);
-          if (!Array.isArray(data)) throw new Error('Formato inválido');
+          if (!Array.isArray(data)) throw new Error('Invalid format');
           this.projects = data;
           this.persist();
           this.renderProjectsList();
-          alert(`Importados ${data.length} projetos com sucesso!`);
+          alert(`Successfully imported ${data.length} projects!`);
         } catch (err) {
-          alert('Erro ao importar: ' + err.message);
+          alert('Import error: ' + err.message);
         }
         input.value = '';
       });
@@ -314,7 +342,7 @@ const Dashboard = {
   },
 
   /* =============================================
-     IMPORTAR ZIP
+     IMPORT ZIP
      ============================================= */
   bindZipUpload() {
     const zone = document.getElementById('zipDropZone');
@@ -354,11 +382,11 @@ const Dashboard = {
 
       let imported = 0;
       for (const [name, content] of Object.entries(zip.files)) {
-        // Ignora pastas vazias e ficheiros ocultos
+        // Skip empty folders and hidden files
         if (name.endsWith('/') || name.startsWith('.') || name.endsWith('.DS_Store')) continue;
 
         const parts = name.split('/');
-        const projectDir = parts[1]; // ex: "meu-app/thumbnail.png"
+        const projectDir = parts[1]; // ex: "my-app/thumbnail.png"
         if (!projectDir || parts.length < 3) continue;
 
         const projectId = projectDir;
@@ -367,7 +395,7 @@ const Dashboard = {
         const fileName = parts[parts.length - 1];
 
         if (!project) {
-          // Verifica se existe info.json
+          // Check for info.json
           const infoKey = Object.keys(zip.files).find(k =>
             k.split('/').slice(0, 2).join('/') === `${parts[0]}/${projectDir}` &&
             k.endsWith('info.json')
@@ -401,7 +429,7 @@ const Dashboard = {
           this.projects.push(project);
         }
 
-        // Se for thumbnail dentro da pasta do projecto, guardar referência
+        // Save thumbnail reference if found
         if (fileName === 'thumbnail.png' || fileName === 'thumbnail.jpg' || fileName === 'thumbnail.jpeg') {
           project.thumbnail = `public/images/projects/${projectId}-${fileName}`;
         }
@@ -411,20 +439,18 @@ const Dashboard = {
 
       this.persist();
       this.renderProjectsList();
-      result.innerHTML = `<p class="dash-alert dash-alert--success">✅ Importados ${imported} ficheiros de ${file.name}. Verifica os projetos na lista.</p>`;
+      result.innerHTML = `<p class="dash-alert dash-alert--success">✅ Imported ${imported} files from ${file.name}. Check the projects list.</p>`;
     } catch (err) {
-      result.innerHTML = `<p class="dash-alert dash-alert--error">❌ Erro: ${err.message}</p>`;
+      result.innerHTML = `<p class="dash-alert dash-alert--error">❌ Error: ${err.message}</p>`;
     } finally {
       progress.style.display = 'none';
     }
   },
 
   async unzip(arrayBuffer) {
-    // Parser ZIP simples usando a biblioteca integrada no browser (minimal)
-    // Como não temos biblioteca externa, usamos um parser mínimo
-    // Para produção, seria melhor usar JSZip via CDN, mas aqui fazemos fetch dinâmico
+    // Using JSZip from CDN for ZIP parsing
+    // Not ideal for production, but works for a personal tool
 
-    // Carrega JSZip do CDN se não estiver disponível
     if (!window.JSZip) {
       await new Promise((resolve, reject) => {
         const script = document.createElement('script');
@@ -443,9 +469,9 @@ const Dashboard = {
     return {
       id,
       title: id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-      subtitle: `Importado de ${hintFile || 'ZIP'}`,
+      subtitle: `Imported from ${hintFile || 'ZIP'}`,
       category: 'other',
-      tags: ['importado'],
+      tags: ['imported'],
       date: new Date().toISOString().split('T')[0],
       links: {},
       downloads: [],
@@ -457,12 +483,12 @@ const Dashboard = {
   },
 
   /* =============================================
-     IMPORTAR DE URL (JSON)
+     IMPORT FROM URL (JSON)
      ============================================= */
   async importFromUrl() {
     const url = document.getElementById('importJsonUrl').value.trim();
     const result = document.getElementById('importResult');
-    if (!url) { alert('Cola a URL do JSON'); return; }
+    if (!url) { this.showToast('error', 'Paste a JSON URL first'); return; }
 
     try {
       const res = await fetch(url);
@@ -478,9 +504,9 @@ const Dashboard = {
         projects = [data];
       }
 
-      // Validar e adicionar
+      // Validate and add
       const valid = projects.filter(p => p.id && p.title);
-      if (valid.length === 0) throw new Error('Nenhum projecto válido encontrado no JSON');
+      if (valid.length === 0) throw new Error('No valid project found in JSON');
 
       valid.forEach(p => {
         if (!this.projects.some(ep => ep.id === p.id)) {
@@ -491,28 +517,30 @@ const Dashboard = {
 
       this.persist();
       this.renderProjectsList();
-      result.innerHTML = `<p class="dash-alert dash-alert--success">✅ Importados ${valid.length} projetos!</p>`;
+      result.innerHTML = `<p class="dash-alert dash-alert--success">✅ Imported ${valid.length} projects!</p>`;
       document.getElementById('importJsonUrl').value = '';
       this.switchTab('projects');
+      this.showToast('success', `Imported ${valid.length} projects`);
     } catch (err) {
       result.innerHTML = `<p class="dash-alert dash-alert--error">❌ ${err.message}</p>`;
+      this.showToast('error', 'Import failed');
     }
   },
 
   /* =============================================
-     IMPORTAR DE REPO GITHUB (README/info)
+     IMPORT FROM GITHUB REPO (README/info)
      ============================================= */
   async importFromGithub() {
     const url = document.getElementById('importGithubUrl').value.trim();
     const result = document.getElementById('importResult');
-    if (!url) { alert('Cola a URL do repositório GitHub'); return; }
+    if (!url) { this.showToast('error', 'Paste a GitHub repository URL'); return; }
 
     try {
       const repoMatch = url.match(/github\.com\/([^/]+)\/([^/]+)/);
-      if (!repoMatch) throw new Error('URL de repositório inválida');
+      if (!repoMatch) throw new Error('Invalid repository URL');
       const [, owner, repo] = repoMatch;
 
-      // Tentar buscar README.md
+      // Try fetching README.md
       const readmeRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/readme`);
       let description = '';
 
@@ -525,7 +553,7 @@ const Dashboard = {
       const project = {
         id: repo.replace(/\./g, '-').toLowerCase(),
         title: repo,
-        subtitle: `Repo de ${owner}`,
+        subtitle: `Repo by ${owner}`,
         category: 'other',
         tags: [`github`, owner],
         date: new Date().toISOString().split('T')[0],
@@ -543,10 +571,10 @@ const Dashboard = {
         this.projects.push(project);
         this.persist();
         this.renderProjectsList();
-        result.innerHTML = `<p class="dash-alert dash-alert--success">✅ Repositório "${repo}" importado! Edita no separador Projetos.</p>`;
+        result.innerHTML = `<p class="dash-alert dash-alert--success">✅ Repository "${repo}" imported! Edit it in the Projects tab.</p>`;
         this.switchTab('projects');
       } else {
-        result.innerHTML = `<p class="dash-alert dash-alert--error">⚠️ Projeto "${repo}" já existe.</p>`;
+        result.innerHTML = `<p class="dash-alert dash-alert--error">⚠️ Project "${repo}" already exists.</p>`;
       }
 
       document.getElementById('importGithubUrl').value = '';
@@ -556,17 +584,17 @@ const Dashboard = {
   },
 
   /* =============================================
-     GITHUB API — COMMIT DIRECTO
+     GITHUB API - DIRECT COMMIT
      ============================================= */
   async publishToGithub() {
     const token = document.getElementById('githubToken').value.trim();
     const result = document.getElementById('githubResult');
 
-    if (!token) { alert('Introduz o GitHub PAT token'); return; }
+    if (!token) { this.showToast('error', 'Enter your GitHub PAT token'); return; }
 
     const url = 'https://api.github.com/repos/mozuraa/LazyStudios/contents/meu-portfolio-site/src/data/projects.json';
 
-    // Buscar SHA actual do ficheiro
+    // Get current file SHA
     let sha = null;
     try {
       const getRes = await fetch(url, {
@@ -576,7 +604,7 @@ const Dashboard = {
         const data = await getRes.json();
         sha = data.sha;
       }
-    } catch { /* ficheiro novo */ }
+    } catch { /* new file */ }
 
     const content = btoa(unescape(encodeURIComponent(JSON.stringify(this.projects, null, 2))));
     const body = {
@@ -598,13 +626,52 @@ const Dashboard = {
 
       const respData = await putRes.json();
       if (putRes.ok) {
-        result.innerHTML = `<p class="dash-alert dash-alert--success">✅ Commit feito com sucesso! <a href="${respData.content.html_url}" target="_blank">Ver no GitHub</a></p>`;
+        result.innerHTML = `<p class="dash-alert dash-alert--success">✅ Commit successful! <a href="${respData.content.html_url}" target="_blank">View on GitHub</a></p>`;
+        this.showToast('success', 'Changes committed to GitHub');
       } else {
-        throw new Error(respData.message || 'Erro no commit');
+        throw new Error(respData.message || 'Commit failed');
       }
     } catch (err) {
       result.innerHTML = `<p class="dash-alert dash-alert--error">❌ ${err.message}</p>`;
+      this.showToast('error', 'GitHub commit failed');
     }
+  },
+
+  /**
+   * Show toast notification
+   */
+  showToast(type, message) {
+    const toast = document.createElement('div');
+    toast.className = `dash-toast dash-toast--${type}`;
+    toast.textContent = message;
+    toast.style.cssText = `
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 1rem 1.5rem;
+      border-radius: 10px;
+      color: white;
+      font-weight: 600;
+      font-size: 0.9rem;
+      z-index: 9999;
+      animation: slideInRight 0.3s ease-out;
+      max-width: 300px;
+    `;
+
+    const colors = {
+      success: '#10b981',
+      error: '#ef4444',
+      info: '#3b82f6',
+      warning: '#f59e0b'
+    };
+    toast.style.background = colors[type] || colors.info;
+
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+      toast.style.animation = 'slideOutRight 0.3s ease-out';
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
   },
 
   /* =============================================
@@ -620,10 +687,10 @@ const Dashboard = {
   }
 };
 
-// Inicializar quando o DOM estiver pronto
+// Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
   Dashboard.init();
-  // Verifica auth se já havia sessão
+  // Check if session already exists
   if (sessionStorage.getItem('dash_auth') === '1') {
     Dashboard.checkAuth();
   }

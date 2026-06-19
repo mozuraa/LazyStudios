@@ -21,7 +21,7 @@ const App = {
    * Inicializar aplicação
    */
   async init() {
-    // Referências DOM
+    // DOM references
     this.projectsGrid = document.getElementById('projectsGrid');
     this.projectsCount = document.getElementById('projectsCount');
     this.searchInput = document.getElementById('searchInput');
@@ -30,19 +30,25 @@ const App = {
     this.mainContent = document.getElementById('mainContent');
     this.detailContainer = document.getElementById('detailContainer');
 
-    // Inicializar tema
+    // Initialize theme
     Theme.init();
 
-    // Carregar dados
+    // Load data
     await this.loadProjects();
 
-    // Inicializar router
+    // Initialize router
     this.initRouter();
 
-    // Setup dos event listeners
+    // Setup event listeners
     this.setupEventListeners();
 
-    // Iniciar router (resolve a rota atual)
+    // Animate stats counters
+    this.animateStats();
+
+    // Setup scroll reveal animations
+    this.setupScrollReveal();
+
+    // Initialize router (resolve current route)
     Router.init();
   },
 
@@ -54,21 +60,21 @@ const App = {
       this.projects = await Utils.fetchJSON('src/data/projects.json');
       Filters.init(this.projects);
 
-      // Renderizar filtros de categorias e tags
+      // Render category and tag filters
       this.renderCategoryFilters();
       this.renderTagFilters();
 
-      // Atualizar quando os filtros mudarem
+      // Re-render when filters change
       Filters.onChange((filtered) => {
         this.renderFilteredProjects(filtered);
       });
 
     } catch (error) {
-      console.error('Erro ao carregar projetos:', error);
+      console.error('Failed to load projects:', error);
       this.projectsGrid.innerHTML = `
         <div class="empty-state">
           <div class="empty-state__icon">⚠️</div>
-          <div class="empty-state__text">Erro ao carregar projetos</div>
+          <div class="empty-state__text">Failed to load projects</div>
           <div class="empty-state__sub">${error.message}</div>
         </div>
       `;
@@ -79,19 +85,19 @@ const App = {
    * Inicializar rotas
    */
   initRouter() {
-    // Rota home
+    // Home route
     Router.register('/', () => {
       this.showHome();
     });
 
-    // Rota de detalhes do projeto
+    // Project detail route
     Router.register('project/:id', (params) => {
       this.showProjectDetail(params.id);
     });
   },
 
   /**
-   * Mostrar página inicial (grid de projetos)
+   * Show home page (projects grid)
    */
   showHome() {
     this.mainContent.classList.remove('hidden');
@@ -101,7 +107,7 @@ const App = {
   },
 
   /**
-   * Mostrar página de detalhes de um projeto
+   * Show project detail page
    */
   showProjectDetail(id) {
     const project = this.projects.find(p => p.id === id);
@@ -114,7 +120,7 @@ const App = {
     this.mainContent.classList.add('hidden');
     this.detailContainer.innerHTML = Renderer.renderDetail(project);
 
-    // Evento do botão "Voltar"
+    // Back button event
     const backBtn = document.getElementById('backBtn');
     if (backBtn) {
       backBtn.addEventListener('click', () => {
@@ -126,16 +132,16 @@ const App = {
   },
 
   /**
-   * Renderizar filtros de categoria
+   * Render category filters
    */
   renderCategoryFilters() {
     const counts = Filters.getCategoryCounts();
     const categories = [
-      { id: 'all', label: `Todos (${counts.all})` },
+      { id: 'all', label: `All (${counts.all})` },
       { id: 'app', label: `📱 Apps (${counts.app})` },
       { id: 'web', label: `🌐 Web (${counts.web})` },
-      { id: 'file', label: `📄 Ficheiros (${counts.file})` },
-      { id: 'other', label: `📁 Outro (${counts.other})` }
+      { id: 'file', label: `📄 Files (${counts.file})` },
+      { id: 'other', label: `📁 Other (${counts.other})` }
     ];
 
     this.categoriesContainer.innerHTML = categories.map(cat => `
@@ -147,7 +153,7 @@ const App = {
   },
 
   /**
-   * Renderizar filtros de tags
+   * Render tag filters
    */
   renderTagFilters() {
     const allTags = Filters.getAllTags();
@@ -165,13 +171,13 @@ const App = {
   },
 
   /**
-   * Renderizar projetos filtrados
+   * Render filtered projects
    */
   renderFilteredProjects(projects) {
     Renderer.renderProjects(projects, this.projectsGrid);
     Renderer.renderCount(projects.length, this.projects.length, this.projectsCount);
 
-    // Adicionar eventos de clique nos cards
+    // Add click events to cards
     this.projectsGrid.querySelectorAll('.project-card').forEach(card => {
       card.addEventListener('click', () => {
         const id = card.dataset.id;
@@ -181,28 +187,28 @@ const App = {
   },
 
   /**
-   * Setup de event listeners
+   * Setup event listeners
    */
   setupEventListeners() {
-    // Toggle tema
+    // Theme toggle
     const themeToggle = document.getElementById('themeToggle');
     if (themeToggle) {
       themeToggle.addEventListener('click', () => Theme.toggle());
     }
 
-    // Pesquisa (com debounce)
+    // Search (with debounce)
     if (this.searchInput) {
       const debouncedSearch = Utils.debounce((e) => {
         Filters.setSearch(e.target.value);
 
-        // Atualizar o estado ativo dos botões de filtro (manter coerência)
+        // Keep filter buttons in sync with search
         this.updateFilterButtons();
       }, 250);
 
       this.searchInput.addEventListener('input', debouncedSearch);
     }
 
-    // Categoria filters (delegated)
+    // Category filters (delegated)
     this.categoriesContainer.addEventListener('click', (e) => {
       const btn = e.target.closest('.filter-btn');
       if (!btn) return;
@@ -210,7 +216,7 @@ const App = {
       const category = btn.dataset.category;
       Filters.setCategory(category);
 
-      // Atualizar UI
+      // Update UI
       this.categoriesContainer.querySelectorAll('.filter-btn').forEach(b => {
         b.classList.toggle('filter-btn--active', b.dataset.category === category);
       });
@@ -228,22 +234,92 @@ const App = {
   },
 
   /**
-   * Atualizar estado visual dos botões de filtro
+   * Animate stats counters when they come into view
+   */
+  animateStats() {
+    const statCards = document.querySelectorAll('.stat-card');
+    if (!statCards.length) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const card = entry.target;
+          const target = parseInt(card.dataset.target) || 0;
+          const suffix = card.dataset.suffix || '';
+          const valueEl = card.querySelector('.stat-card__value');
+
+          // Animate from 0 to target
+          let current = 0;
+          const duration = 1500;
+          const steps = 60;
+          const increment = target / steps;
+          const stepTime = duration / steps;
+
+          const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+              current = target;
+              clearInterval(timer);
+            }
+            valueEl.textContent = Math.floor(current) + suffix;
+          }, stepTime);
+
+          observer.unobserve(card);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    statCards.forEach(card => observer.observe(card));
+  },
+
+  /**
+   * Setup scroll-triggered reveal animations
+   */
+  setupScrollReveal() {
+    const sections = document.querySelectorAll('.projects, .stats, .filters');
+    if (!sections.length) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, { threshold: 0.1 });
+
+    sections.forEach(section => {
+      section.style.opacity = '0';
+      section.style.transform = 'translateY(20px)';
+      section.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+      observer.observe(section);
+    });
+
+    // Immediately show hero section
+    const hero = document.querySelector('.hero');
+    if (hero) {
+      hero.style.opacity = '1';
+      hero.style.transform = 'translateY(0)';
+    }
+  },
+
+  /**
+   * Update visual state of filter buttons
    */
   updateFilterButtons() {
-    // Manter o botão de categoria ativo consistente
+    // Keep active category button consistent
     this.categoriesContainer.querySelectorAll('.filter-btn').forEach(b => {
       b.classList.toggle('filter-btn--active', b.dataset.category === Filters.activeCategory);
     });
 
-    // Manter tags ativas consistentes
+    // Keep active tags consistent
     this.tagsContainer.querySelectorAll('.tag-btn').forEach(b => {
       b.classList.toggle('tag-btn--active', Filters.activeTags.includes(b.dataset.tag));
     });
   }
 };
 
-// Iniciar quando o DOM estiver pronto
+// Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
   App.init();
 });

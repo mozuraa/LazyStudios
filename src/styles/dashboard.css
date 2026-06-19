@@ -60,6 +60,12 @@ body {
   gap: 0.5rem;
 }
 
+.dash-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
 .dash-btn--primary { background: var(--dash-primary); color: white; }
 .dash-btn--primary:hover { background: var(--dash-primary-hover); }
 .dash-btn--danger { background: var(--dash-danger); color: white; }
@@ -96,6 +102,12 @@ body {
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
+  transition: all 0.2s;
+}
+
+.dash-project-card:hover {
+  border-color: var(--dash-primary);
+  transform: translateY(-2px);
 }
 
 .dash-project-card .info {
@@ -201,6 +213,7 @@ body {
   justify-content: center;
   z-index: 1000;
   padding: 1rem;
+  backdrop-filter: blur(4px);
 }
 
 .dash-modal__content {
@@ -212,6 +225,18 @@ body {
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
+  animation: modalIn 0.2s ease-out;
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 .dash-modal__header {
@@ -232,11 +257,20 @@ body {
 .dash-login .logo {
   font-size: 3rem;
   margin-bottom: 1rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
 }
 
 .dash-login h1 {
   font-size: 1.5rem;
   margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .dash-login .dash-card {
@@ -258,6 +292,13 @@ body {
   color: var(--dash-danger);
   border: 1px solid var(--dash-danger);
   display: block;
+  animation: shake 0.4s ease-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
 }
 
 .dash-alert--success {
@@ -265,6 +306,18 @@ body {
   color: var(--dash-success);
   border: 1px solid var(--dash-success);
   display: block;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .dash-empty {
@@ -302,4 +355,41 @@ body {
   color: var(--dash-primary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+/* Toast notifications */
+.dash-toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  z-index: 9999;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  max-width: 300px;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
 }

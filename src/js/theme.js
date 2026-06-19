@@ -1,5 +1,5 @@
 /**
- * Gestão do tema (modo escuro/claro)
+ * Theme management - dark mode, light mode, you know the drill
  */
 const Theme = {
   STORAGE_KEY: 'portfolio-theme',
@@ -39,8 +39,8 @@ const Theme = {
 
     const isDark = this.getCurrent() === 'dark';
     toggle.innerHTML = isDark
-      ? '<i class="fa-solid fa-sun"></i><span class="theme-toggle__label">Claro</span>'
-      : '<i class="fa-solid fa-moon"></i><span class="theme-toggle__label">Escuro</span>';
+      ? '<i class="fa-solid fa-sun"></i><span class="theme-toggle__label">Light</span>'
+      : '<i class="fa-solid fa-moon"></i><span class="theme-toggle__label">Dark</span>';
   }
 };
 

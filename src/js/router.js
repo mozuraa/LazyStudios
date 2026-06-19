@@ -1,14 +1,14 @@
 /**
- * Router simples baseado em hash (#)
+ * Simple hash-based router - gets the job done without the bloat
  */
 const Router = {
   routes: {},
   currentRoute: null,
 
   /**
-   * Registar uma rota
-   * @param {string} pattern - Padrão da rota (ex: 'project/:id')
-   * @param {Function} handler - Função a executar quando a rota corresponde
+   * Register a route
+   * @param {string} pattern - Route pattern (ex: 'project/:id')
+   * @param {Function} handler - Function to call when route matches
    */
   register(pattern, handler) {
     // Converter padrão para regex (ex: 'project/:id' -> /^project\/([^/]+)$/)
@@ -21,7 +21,7 @@ const Router = {
   },
 
   /**
-   * Iniciar o router (escutar mudanças de hash)
+   * Start the router (listen for hash changes)
    */
   init() {
     window.addEventListener('hashchange', () => this.resolve());
@@ -29,7 +29,7 @@ const Router = {
   },
 
   /**
-   * Resolver a rota atual
+   * Resolve the current route
    */
   resolve() {
     const hash = window.location.hash.replace('#', '') || '/';
@@ -40,7 +40,7 @@ const Router = {
       const match = hash.match(regex);
 
       if (match) {
-        // Extrair parâmetros (ex: { id: 'lazy-notes' })
+        // Extract parameters (ex: { id: 'lazy-notes' })
         const paramNames = [];
         const paramPattern = /:(\w+)/g;
         let p;
@@ -59,7 +59,7 @@ const Router = {
       }
     }
 
-    // Rota não encontrada -> home
+    // Route not found -> home
     if (this.routes['/']) {
       this.currentRoute = { pattern: '/', params: {}, hash: '/' };
       this.routes['/'].handler({});
@@ -67,14 +67,14 @@ const Router = {
   },
 
   /**
-   * Navegar para uma rota
+   * Navigate to a route
    */
   navigate(path) {
     window.location.hash = path;
   },
 
   /**
-   * Obter a rota atual
+   * Get the current route info
    */
   getCurrentRoute() {
     return this.currentRoute;

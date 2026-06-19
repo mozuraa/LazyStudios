@@ -1,5 +1,5 @@
 /**
- * Lógica de pesquisa e filtros
+ * Search and filter logic - because finding stuff shouldn't be hard
  */
 const Filters = {
   projects: [],
@@ -10,7 +10,7 @@ const Filters = {
   callbacks: [],
 
   /**
-   * Inicializar com os dados dos projetos
+   * Initialize with project data
    */
   init(projects) {
     this.projects = projects;
@@ -18,21 +18,21 @@ const Filters = {
   },
 
   /**
-   * Registar callback para quando os filtros mudam
+   * Register callback for when filters change
    */
   onChange(callback) {
     this.callbacks.push(callback);
   },
 
   /**
-   * Notificar listeners
+   * Notify all listeners
    */
   notify() {
     this.callbacks.forEach(cb => cb(this.filteredProjects));
   },
 
   /**
-   * Obter lista única de todas as tags
+   * Get unique list of all tags
    */
   getAllTags() {
     const tagSet = new Set();
@@ -41,7 +41,7 @@ const Filters = {
   },
 
   /**
-   * Obter contagem de projetos por categoria
+   * Get project count by category
    */
   getCategoryCounts() {
     const counts = { all: this.projects.length, app: 0, web: 0, file: 0, other: 0 };
@@ -54,7 +54,7 @@ const Filters = {
   },
 
   /**
-   * Definir categoria ativa
+   * Set active category
    */
   setCategory(category) {
     this.activeCategory = category;
@@ -62,7 +62,7 @@ const Filters = {
   },
 
   /**
-   * Alternar tag nos filtros
+   * Toggle tag filter
    */
   toggleTag(tag) {
     const index = this.activeTags.indexOf(tag);
@@ -75,7 +75,7 @@ const Filters = {
   },
 
   /**
-   * Definir query de pesquisa
+   * Set search query
    */
   setSearch(query) {
     this.searchQuery = query.toLowerCase().trim();
@@ -83,7 +83,7 @@ const Filters = {
   },
 
   /**
-   * Aplicar todos os filtros ativos
+   * Apply all active filters
    */
   applyFilters() {
     const query = this.searchQuery;
@@ -91,12 +91,12 @@ const Filters = {
     const tags = this.activeTags;
 
     this.filteredProjects = this.projects.filter(project => {
-      // Filtro por categoria
+      // Category filter
       if (category !== 'all' && project.category !== category) {
         return false;
       }
 
-      // Filtro por tags (AND - todas as tags selecionadas devem estar presentes)
+      // Tag filter (AND logic - all selected tags must be present)
       if (tags.length > 0) {
         const projectTags = project.tags.map(t => t.toLowerCase());
         const hasAllTags = tags.every(tag => projectTags.includes(tag.toLowerCase()));
@@ -105,7 +105,7 @@ const Filters = {
         }
       }
 
-      // Filtro por pesquisa (título, descrição, tags)
+      // Search filter (title, description, tags)
       if (query) {
         const searchable = [
           project.title,
@@ -125,7 +125,7 @@ const Filters = {
   },
 
   /**
-   * Limpar todos os filtros
+   * Reset all filters
    */
   reset() {
     this.activeCategory = 'all';

@@ -1,9 +1,9 @@
 /**
- * Utilitários gerais
+ * General utilities - the stuff I reach for in every project
  */
 const Utils = {
   /**
-   * Fetch e parse de JSON
+   * Fetch and parse JSON - because JSON is everywhere
    */
   async fetchJSON(url) {
     const response = await fetch(url);
@@ -14,7 +14,7 @@ const Utils = {
   },
 
   /**
-   * Formatar data ISO para dd/mm/aaaa
+   * Format ISO date to a human-readable format
    */
   formatDate(isoString) {
     const date = new Date(isoString);
@@ -26,7 +26,8 @@ const Utils = {
   },
 
   /**
-   * Escapar HTML para prevenir XSS
+   * Escape HTML strings to prevent XSS attacks
+   * Never trust user input, kids
    */
   escapeHTML(str) {
     const div = document.createElement('div');
@@ -35,7 +36,7 @@ const Utils = {
   },
 
   /**
-   * Debounce para pesquisa
+   * Debounce function to avoid spamming requests on every keystroke
    */
   debounce(fn, delay = 300) {
     let timeoutId;
@@ -46,7 +47,7 @@ const Utils = {
   },
 
   /**
-   * Mapear categoria para ícone Font Awesome
+   * Map category to a Font Awesome icon
    */
   getCategoryIcon(category) {
     const icons = {
@@ -59,26 +60,26 @@ const Utils = {
   },
 
   /**
-   * Mapear categoria para label em português
+   * Map category to a human-readable label
    */
   getCategoryLabel(category) {
     const labels = {
       app: 'App',
       web: 'Web',
-      file: 'Ficheiro',
-      other: 'Outro'
+      file: 'File',
+      other: 'Other'
     };
-    return labels[category] || 'Outro';
+    return labels[category] || 'Other';
   },
 
   /**
-   * Mapear status para label
+   * Map project status to a display label
    */
   getStatusLabel(status) {
     const labels = {
-      active: 'Ativo',
-      archived: 'Arquivado',
-      wip: 'Em desenvolvimento'
+      active: 'Active',
+      archived: 'Archived',
+      wip: 'In Progress'
     };
     return labels[status] || status;
   }
