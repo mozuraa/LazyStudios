@@ -1,0 +1,305 @@
+/* =============================================
+   DASHBOARD STYLES
+   ============================================= */
+:root {
+  --dash-bg: #0f172a;
+  --dash-surface: #1e293b;
+  --dash-border: #334155;
+  --dash-text: #f1f5f9;
+  --dash-muted: #94a3b8;
+  --dash-primary: #3b82f6;
+  --dash-primary-hover: #2563eb;
+  --dash-danger: #ef4444;
+  --dash-success: #22c55e;
+  --dash-warning: #f59e0b;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--dash-bg);
+  color: var(--dash-text);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.dash-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.dash-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--dash-border);
+}
+
+.dash-header h1 {
+  font-size: 1.5rem;
+  margin: 0;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.dash-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dash-btn--primary { background: var(--dash-primary); color: white; }
+.dash-btn--primary:hover { background: var(--dash-primary-hover); }
+.dash-btn--danger { background: var(--dash-danger); color: white; }
+.dash-btn--success { background: var(--dash-success); color: white; }
+.dash-btn--ghost { background: transparent; color: var(--dash-muted); border: 1px solid var(--dash-border); }
+.dash-btn--ghost:hover { color: white; border-color: white; }
+
+.dash-card {
+  background: var(--dash-surface);
+  border: 1px solid var(--dash-border);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.dash-card h2 {
+  font-size: 1.1rem;
+  margin: 0 0 1rem 0;
+  color: var(--dash-text);
+}
+
+.dash-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.dash-project-card {
+  background: var(--dash-surface);
+  border: 1px solid var(--dash-border);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dash-project-card .info {
+  flex: 1;
+  min-width: 0;
+}
+
+.dash-project-card .info h3 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dash-project-card .info p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--dash-muted);
+}
+
+.dash-project-card .actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.dash-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.dash-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.dash-field label {
+  font-size: 0.8rem;
+  color: var(--dash-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.dash-field input,
+.dash-field select,
+.dash-field textarea {
+  background: var(--dash-bg);
+  border: 1px solid var(--dash-border);
+  border-radius: 0.375rem;
+  padding: 0.625rem 0.75rem;
+  color: var(--dash-text);
+  font-size: 0.9rem;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.dash-field input:focus,
+.dash-field select:focus,
+.dash-field textarea:focus {
+  outline: none;
+  border-color: var(--dash-primary);
+}
+
+.dash-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 640px) {
+  .dash-row { grid-template-columns: 1fr; }
+}
+
+.dash-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.dash-tab {
+  padding: 0.5rem 1rem;
+  background: var(--dash-surface);
+  border: 1px solid var(--dash-border);
+  border-radius: 0.375rem;
+  color: var(--dash-muted);
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.dash-tab:hover { color: white; border-color: white; }
+.dash-tab--active { background: var(--dash-primary); color: white; border-color: var(--dash-primary); }
+
+.dash-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.dash-modal__content {
+  background: var(--dash-surface);
+  border: 1px solid var(--dash-border);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.dash-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.dash-modal__header h2 { margin: 0; font-size: 1.25rem; }
+
+.dash-login {
+  max-width: 400px;
+  margin: 4rem auto;
+  text-align: center;
+}
+
+.dash-login .logo {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.dash-login h1 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.dash-login .dash-card {
+  text-align: left;
+}
+
+.dash-login .dash-btn { width: 100%; justify-content: center; }
+
+.dash-alert {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  display: none;
+}
+
+.dash-alert--error {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--dash-danger);
+  border: 1px solid var(--dash-danger);
+  display: block;
+}
+
+.dash-alert--success {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--dash-success);
+  border: 1px solid var(--dash-success);
+  display: block;
+}
+
+.dash-empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--dash-muted);
+}
+
+.dash-empty .icon { font-size: 3rem; margin-bottom: 1rem; }
+
+.drop-zone {
+  border: 2px dashed var(--dash-border);
+  border-radius: 0.5rem;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.drop-zone:hover, .drop-zone.dragover {
+  border-color: var(--dash-primary);
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.project-form-section {
+  border: 1px solid var(--dash-border);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.project-form-section h3 {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.9rem;
+  color: var(--dash-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}

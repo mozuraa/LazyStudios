@@ -1,7 +1,31 @@
+# Dependencies
 node_modules/
+.pnp
+.pnp.js
+
+# IDE / Editor
 .vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
 .DS_Store
 Thumbs.db
+
+# Logs
 *.log
+npm-debug.log*
+
+# Env files
 .env
 .env.local
+.env.*.local
+
+# Dashboard generated (keep projects.json tracked)
+# localStorage data is client-side only
+
+# Build output (if any)
+dist/
+build/
+.temp/

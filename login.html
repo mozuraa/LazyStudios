@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-PT" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lazy Studios - Login</title>
+  <link rel="stylesheet" href="src/styles/dashboard.css">
+  <link rel="stylesheet" href="src/styles/main.css">
+</head>
+<body>
+  <div class="dash-login" id="loginPage">
+    <div class="logo">💼</div>
+    <h1>Lazy Studios Admin</h1>
+    <div class="dash-card">
+      <div id="loginAlert" class="dash-alert"></div>
+      <form id="loginForm" class="dash-form">
+        <div class="dash-field">
+          <label>Utilizador</label>
+          <input type="text" id="loginUser" autocomplete="username" required>
+        </div>
+        <div class="dash-field">
+          <label>Password</label>
+          <input type="password" id="loginPass" autocomplete="current-password" required>
+        </div>
+        <button type="submit" class="dash-btn dash-btn--primary">Entrar</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="dashboardPage" style="display:none;">
+    <div class="dash-container">
+      <header class="dash-header">
+        <h1>🎛️ Dashboard - Lazy Studios</h1>
+        <div style="display:flex;gap:0.5rem;align-items:center;">
+          <a href="#/" class="dash-btn dash-btn--ghost" target="_blank">Ver Site</a>
+          <button id="logoutBtn" class="dash-btn dash-btn--ghost">Sair</button>
+        </div>
+      </header>
+
+      <div class="dash-tabs">
+        <button class="dash-tab dash-tab--active" data-tab="projects">📋 Projetos</button>
+        <button class="dash-tab" data-tab="add">➕ Adicionar Projeto</button>
+        <button class="dash-tab" data-tab="import-zip">📦 Importar ZIP</button>
+        <button class="dash-tab" data-tab="import-url">🔗 Importar URL/Repo</button>
+        <button class="dash-tab" data-tab="github">🐙 GitHub API</button>
+        <button class="dash-tab" data-tab="export">💾 Exportar/Importar</button>
+      </div>
+
+      <!-- Projects List Tab -->
+      <div id="tab-projects" class="tab-content">
+        <div class="dash-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+            <h2>📋 Projetos Existentes</h2>
+            <button class="dash-btn dash-btn--primary" onclick="Dashboard.openAddModal()">+ Novo Projeto</button>
+          </div>
+          <div id="projectsList" class="dash-grid"></div>
+        </div>
+      </div>
+
+      <!-- Add Project Tab -->
+      <div id="tab-add" class="tab-content" style="display:none;">
+        <div class="dash-card">
+          <h2>➕ Adicionar Projeto Manualmente</h2>
+          <form id="addProjectForm" class="dash-form">
+            <div class="dash-row">
+              <div class="dash-field">
+                <label>ID (único, sem espaços)</label>
+                <input type="text" id="projId" placeholder="ex: meu-app" required>
+              </div>
+              <div class="dash-field">
+                <label>Título</label>
+                <input type="text" id="projTitle" placeholder="Nome do projeto" required>
+              </div>
+            </div>
+
+            <div class="dash-field">
+              <label>Subtítulo</label>
+              <input type="text" id="projSubtitle" placeholder="Breve descrição">
+            </div>
+
+            <div class="dash-row">
+              <div class="dash-field">
+                <label>Categoria</label>
+                <select id="projCategory">
+                  <option value="app">📱 App</option>
+                  <option value="web">🌐 Web</option>
+                  <option value="file">📄 Ficheiro</option>
+                  <option value="other">📁 Outro</option>
+                </select>
+              </div>
+              <div class="dash-field">
+                <label>Data</label>
+                <input type="date" id="projDate">
+              </div>
+            </div>
+
+            <div class="dash-field">
+              <label>Tags (separadas por vírgula)</label>
+              <input type="text" id="projTags" placeholder="javascript, react, api">
+            </div>
+
+            <div class="dash-field">
+              <label>Descrição longa (Markdown simples)</label>
+              <textarea id="projDesc" rows="4" placeholder="Descrição detalhada do projeto..."></textarea>
+            </div>
+
+            <div class="project-form-section">
+              <h3>🔗 Links</h3>
+              <div class="dash-row">
+                <div class="dash-field">
+                  <label>Demo URL</label>
+                  <input type="url" id="projLinkDemo" placeholder="https://...">
+                </div>
+                <div class="dash-field">
+                  <label>Código Fonte (GitHub)</label>
+                  <input type="url" id="projLinkSource" placeholder="https://github.com/...">
+                </div>
+              </div>
+              <div class="dash-field">
+                <label>Vídeo URL</label>
+                <input type="url" id="projLinkVideo" placeholder="https://youtube.com/...">
+              </div>
+            </div>
+
+            <div class="project-form-section">
+              <h3>📥 Downloads</h3>
+              <div id="downloadsContainer"></div>
+              <button type="button" class="dash-btn dash-btn--ghost" onclick="Dashboard.addDownloadField()">+ Adicionar Download</button>
+            </div>
+
+            <div class="project-form-section">
+              <h3>⭐ Funcionalidades (uma por linha)</h3>
+              <textarea id="projFeatures" rows="3" placeholder="- Funcionalidade 1&#10;- Funcionalidade 2"></textarea>
+            </div>
+
+            <button type="submit" class="dash-btn dash-btn--success">💾 Guardar Projeto</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Import ZIP Tab -->
+      <div id="tab-import-zip" class="tab-content" style="display:none;">
+        <div class="dash-card">
+          <h2>📦 Importar Projetos via ZIP</h2>
+          <p style="color:var(--dash-muted);margin-bottom:1rem;">
+            Faz upload de um ZIP contendo pastas de projetos. Cada pasta dentro do ZIP deve ter uma estrutura com:
+            <code>thumbnail.png</code>, <code>info.json</code> ou dados básicos.
+          </p>
+          <div class="drop-zone" id="zipDropZone">
+            <div style="font-size:2rem;">📦</div>
+            <p>Arrasta um ficheiro ZIP aqui ou clica para seleccionar</p>
+            <input type="file" id="zipFileInput" accept=".zip" style="display:none;">
+          </div>
+          <div id="zipProgress" style="margin-top:1rem;display:none;">
+            <p>⏳ A processar...</p>
+          </div>
+          <div id="zipResult" style="margin-top:1rem;"></div>
+        </div>
+      </div>
+
+      <!-- Import URL/Repo Tab -->
+      <div id="tab-import-url" class="tab-content" style="display:none;">
+        <div class="dash-card">
+          <h2>🔗 Importar de URL ou Repositório</h2>
+
+          <div class="dash-field" style="margin-bottom:1rem;">
+            <label>URL do JSON do projeto</label>
+            <input type="url" id="importJsonUrl" placeholder="https://exemplo.com/projeto.json">
+            <button class="dash-btn dash-btn--primary" style="margin-top:0.5rem;" onclick="Dashboard.importFromUrl()">Importar JSON</button>
+          </div>
+
+          <hr style="border-color:var(--dash-border);margin:1.5rem 0;">
+
+          <div class="dash-field" style="margin-bottom:1rem;">
+            <label>URL de repositório GitHub (será buscado o README ou info)</label>
+            <input type="url" id="importGithubUrl" placeholder="https://github.com/utilizador/repo">
+            <button class="dash-btn dash-btn--primary" style="margin-top:0.5rem;" onclick="Dashboard.importFromGithub()">Importar do GitHub</button>
+          </div>
+
+          <div id="importResult" style="margin-top:1rem;"></div>
+        </div>
+      </div>
+
+      <!-- GitHub API Tab -->
+      <div id="tab-github" class="tab-content" style="display:none;">
+        <div class="dash-card">
+          <h2>🐙 Publicar no GitHub (commit directo)</h2>
+          <p style="color:var(--dash-muted);margin-bottom:1rem;">
+            Faz commit e push automático dos projects.json para o GitHub.
+          </p>
+          <div class="dash-field" style="margin-bottom:1rem;">
+            <label>GitHub Personal Access Token (PAT)</label>
+            <input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxx">
+            <small style="color:var(--dash-muted);">Criar em Settings → Developer Settings → Personal Access Tokens (repo scope)</small>
+          </div>
+          <button class="dash-btn dash-btn--success" onclick="Dashboard.publishToGithub()">🚀 Publicar no GitHub</button>
+          <div id="githubResult" style="margin-top:1rem;"></div>
+        </div>
+      </div>
+
+      <!-- Export/Import Tab -->
+      <div id="tab-export" class="tab-content" style="display:none;">
+        <div class="dash-card">
+          <h2>💾 Exportar / Importar Backup</h2>
+          <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+            <button class="dash-btn dash-btn--primary" onclick="Dashboard.exportJSON()">📥 Exportar projects.json</button>
+            <button class="dash-btn dash-btn--ghost" onclick="document.getElementById('importFileInput').click()">📤 Importar JSON</button>
+            <input type="file" id="importFileInput" accept=".json" style="display:none;">
+          </div>
+          <p style="color:var(--dash-muted);font-size:0.8rem;margin-top:0.5rem;">
+            Exporta guarda backup local. Importar substitui os dados actuais.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="src/js/auth.js"></script>
+</body>
+</html>
