@@ -2,16 +2,17 @@
   {
     "id": "lazy-notes",
     "title": "Lazy Notes",
-    "subtitle": "App de notas minimalista e offline",
-    "description": "Uma aplicação Android simples para criar, editar e organizar notas pessoais com pesquisa instantânea e modo escuro.",
-    "longDescription": "## Sobre\n\n**Lazy Notes** é uma aplicação Android desenvolvida em Kotlin que permite criar e organizar notas de forma simples e rápida.\n\n### Funcionalidades\n- Criação e edição de notas offline\n- Pesquisa instantânea por título ou conteúdo\n- Modo escuro automático\n- Backup para Google Drive\n- Interface Material Design 3\n- Sem anúncios, sem tracking",
+    "subtitle": "Minimalist offline note-taking app",
+    "description": "A simple Android app to create, edit and organize personal notes with instant search and dark mode.",
+    "longDescription": "## About\n\n**Lazy Notes** is an Android app built in Kotlin that lets you create and organize notes quickly and simply.\n\n### Features\n- Offline note creation and editing\n- Instant search by title or content\n- Automatic dark mode\n- Google Drive backup\n- Material Design 3 interface\n- No ads, no tracking",
     "category": "app",
     "tags": ["kotlin", "android", "material-design", "room", "jetpack-compose"],
     "thumbnail": "/images/projects/lazy-notes.png",
     "links": {
       "demo": "",
       "source": "https://github.com/rafael/lazy-notes",
-      "video": ""
+      "video": "",
+      "external": "https://lazy-studios.vercel.app"
     },
     "downloads": [
       {
@@ -22,12 +23,12 @@
       }
     ],
     "features": [
-      "Criação de notas offline",
-      "Pesquisa instantânea",
-      "Modo escuro automático",
-      "Backup Google Drive",
+      "Offline note creation",
+      "Instant search",
+      "Automatic dark mode",
+      "Google Drive backup",
       "Material Design 3",
-      "0 anúncios"
+      "No ads"
     ],
     "status": "active",
     "date": "2025-12-01"
@@ -35,25 +36,26 @@
   {
     "id": "taskflow-web",
     "title": "TaskFlow",
-    "subtitle": "Gestor de tarefas colaborativo",
-    "description": "Plataforma web para gestão de tarefas em equipa com kanban, calendário e notificações em tempo real.",
-    "longDescription": "## Sobre\n\n**TaskFlow** é uma aplicação web desenvolvida com React e Node.js para gestão de projetos e tarefas em equipa.\n\n### Funcionalidades\n- Quadro Kanban drag-and-drop\n- Calendário integrado\n- Notificações em tempo real (WebSocket)\n- Autenticação OAuth2 (Google, GitHub)\n- API RESTful documentada\n- Modo escuro/claro",
+    "subtitle": "Collaborative task management",
+    "description": "Web platform for team task management with kanban, calendar and real-time notifications.",
+    "longDescription": "## About\n\n**TaskFlow** is a web app built with React and Node.js for team project and task management.\n\n### Features\n- Drag-and-drop kanban board\n- Integrated calendar\n- Real-time notifications (WebSocket)\n- OAuth2 authentication (Google, GitHub)\n- Documented RESTful API\n- Dark/light mode",
     "category": "web",
     "tags": ["react", "nodejs", "socket-io", "mongodb", "tailwindcss"],
     "thumbnail": "/images/projects/taskflow.png",
     "links": {
       "demo": "https://taskflow-demo.vercel.app",
       "source": "https://github.com/rafael/taskflow",
-      "video": ""
+      "video": "",
+      "external": "https://lazy-studios.vercel.app"
     },
     "downloads": [],
     "features": [
       "Kanban drag-and-drop",
-      "Calendário integrado",
-      "Notificações em tempo real",
-      "Autenticação OAuth2",
-      "API RESTful",
-      "Modo escuro"
+      "Integrated calendar",
+      "Real-time notifications",
+      "OAuth2 authentication",
+      "RESTful API",
+      "Dark mode"
     ],
     "status": "active",
     "date": "2025-10-15"
@@ -61,20 +63,21 @@
   {
     "id": "pdf-tools",
     "title": "PDF Tools",
-    "subtitle": "Coleção de utilitários para PDF",
-    "description": "Conjunto de scripts e ferramentas para manipular ficheiros PDF: merge, split, compress e extrair texto.",
-    "longDescription": "## Sobre\n\n**PDF Tools** é uma coleção de utilitários open-source para manipulação de ficheiros PDF, desenvolvidos em Python.\n\n### Ferramentas incluídas\n- **pdf-merge.py** — Junta múltiplos PDFs num único ficheiro\n- **pdf-split.py** — Divide um PDF em páginas individuais\n- **pdf-compress.py** — Comprime PDFs reduzindo o tamanho\n- **pdf-extract.py** — Extrai texto de PDFs para TXT\n\nTodas as ferramentas funcionam via linha de comandos e suportam tanto Python 3.8+ como executáveis standalone.",
+    "subtitle": "Collection of PDF utilities",
+    "description": "Set of scripts and tools to manipulate PDF files: merge, split, compress and extract text.",
+    "longDescription": "## About\n\n**PDF Tools** is an open-source collection of utilities for PDF file manipulation, developed in Python.\n\n### Included tools\n- **pdf-merge.py** — Joins multiple PDFs into a single file\n- **pdf-split.py** — Splits a PDF into individual pages\n- **pdf-compress.py** — Compresses PDFs to reduce file size\n- **pdf-extract.py** — Extracts text from PDFs to TXT\n\nAll tools work via command line and support both Python 3.8+ and standalone executables.",
     "category": "file",
     "tags": ["python", "pdf", "automation", "cli"],
     "thumbnail": "/images/projects/pdf-tools.png",
     "links": {
       "demo": "",
       "source": "https://github.com/rafael/pdf-tools",
-      "video": ""
+      "video": "",
+      "external": "https://lazy-studios.vercel.app"
     },
     "downloads": [
       {
-        "label": "ZIP (Todos os scripts)",
+        "label": "ZIP (All scripts)",
         "url": "/downloads/documents/pdf-tools-v2.0.0.zip",
         "icon": "file-archive",
         "size": "1.8 MB"
@@ -87,11 +90,11 @@
       }
     ],
     "features": [
-      "Merge de PDFs",
-      "Split de PDFs",
-      "Compressão",
-      "Extração de texto",
-      "CLI simples",
+      "PDF merge",
+      "PDF split",
+      "Compression",
+      "Text extraction",
+      "Simple CLI",
       "Open-source"
     ],
     "status": "active",
