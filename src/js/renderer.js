@@ -1,6 +1,8 @@
 /**
  * Renderização de componentes HTML
  */
+import Utils from './utils.js';
+
 const Renderer = {
   /**
    * Renderizar grid de project cards

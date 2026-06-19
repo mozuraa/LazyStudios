@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="250" viewBox="0 0 400 250">
+  <rect width="400" height="250" fill="#1e293b" rx="8"/>
+  <text x="200" y="100" text-anchor="middle" font-family="Arial" font-size="60" fill="#6366f1">📝</text>
+  <text x="200" y="150" text-anchor="middle" font-family="Arial" font-size="18" fill="#94a3b8" font-weight="bold">Lazy Notes</text>
+  <text x="200" y="180" text-anchor="middle" font-family="Arial" font-size="12" fill="#64748b">App de notas minimalista</text>
+</svg>
