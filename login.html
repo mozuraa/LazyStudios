@@ -59,6 +59,10 @@
 
       <!-- Add Project Tab -->
       <div id="tab-add" class="tab-content" style="display:none;">
+        <div style="margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center;">
+          <span id="saveIndicator" style="font-size:0.85rem;color:var(--dash-success);opacity:0;transition:opacity 0.3s;">💾 Saved</span>
+          <button class="dash-btn dash-btn--ghost" onclick="Dashboard.openAddModal()">+ New Project</button>
+        </div>
         <div class="dash-card">
           <h2>➕ Add Project Manually</h2>
           <form id="addProjectForm" class="dash-form">
@@ -123,14 +127,11 @@
             </div>
 
             <div class="project-form-section">
-              <h3>📥 Downloads</h3>
-              <div id="downloadsContainer"></div>
-              <button type="button" class="dash-btn dash-btn--ghost" onclick="Dashboard.addDownloadField()">+ Add Download</button>
-            </div>
-
-            <div class="project-form-section">
-              <h3>⭐ Features (one per line)</h3>
-              <textarea id="projFeatures" rows="3" placeholder="- Feature 1&#10;- Feature 2"></textarea>
+              <h3>🖼️ Thumbnail</h3>
+              <div class="dash-field">
+                <label>Thumbnail URL</label>
+                <input type="url" id="projThumbnail" placeholder="https://... or public/images/projects/...">
+              </div>
             </div>
 
             <button type="submit" class="dash-btn dash-btn--success">💾 Save Project</button>

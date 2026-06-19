@@ -228,7 +228,7 @@ img {
 .theme-toggle:hover {
   border-color: var(--accent);
   background: var(--accent-light);
-  transform: rotate(15deg);
+  transform: scale(1.05);
 }
 
 .theme-toggle__label {

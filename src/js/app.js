@@ -48,6 +48,9 @@ const App = {
     // Setup scroll reveal animations
     this.setupScrollReveal();
 
+    // Initialize interactive background
+    this.initBackground();
+
     // Initialize router (resolve current route)
     Router.init();
   },
@@ -60,14 +63,13 @@ const App = {
       this.projects = await Utils.fetchJSON('src/data/projects.json');
       Filters.init(this.projects);
 
-      // Render category and tag filters
-      this.renderCategoryFilters();
-      this.renderTagFilters();
+    // Render category filters
+    this.renderCategoryFilters();
 
-      // Re-render when filters change
-      Filters.onChange((filtered) => {
-        this.renderFilteredProjects(filtered);
-      });
+    // Re-render when filters change
+    Filters.onChange((filtered) => {
+      this.renderFilteredProjects(filtered);
+    });
 
     } catch (error) {
       console.error('Failed to load projects:', error);
@@ -153,21 +155,11 @@ const App = {
   },
 
   /**
-   * Render tag filters
+   * Tag filters removed for cleaner UI
    */
   renderTagFilters() {
-    const allTags = Filters.getAllTags();
-
-    if (allTags.length === 0) {
-      this.tagsContainer.innerHTML = '';
-      return;
-    }
-
-    this.tagsContainer.innerHTML = allTags.map(tag => `
-      <button class="tag-btn" data-tag="${Utils.escapeHTML(tag)}">
-        ${Utils.escapeHTML(tag)}
-      </button>
-    `).join('');
+    // Tags hidden to reduce noise — keep only category filters
+    this.tagsContainer.innerHTML = '';
   },
 
   /**
@@ -222,15 +214,7 @@ const App = {
       });
     });
 
-    // Tag filters (delegated)
-    this.tagsContainer.addEventListener('click', (e) => {
-      const btn = e.target.closest('.tag-btn');
-      if (!btn) return;
-
-      const tag = btn.dataset.tag;
-      Filters.toggleTag(tag);
-      btn.classList.toggle('tag-btn--active');
-    });
+    // Tag filters removed
   },
 
   /**
@@ -304,6 +288,109 @@ const App = {
   },
 
   /**
+   * Interactive mouse-following dots background
+   */
+  initBackground() {
+    const canvas = document.getElementById('bgCanvas');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let mouse = { x: null, y: null };
+    const dots = [];
+    const DOT_COUNT = 50;
+    const CONNECTION_DIST = 150;
+
+    const resize = () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    };
+    resize();
+    window.addEventListener('resize', resize);
+
+    // Track mouse position
+    window.addEventListener('mousemove', (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+
+    window.addEventListener('mouseout', () => {
+      mouse.x = null;
+      mouse.y = null;
+    });
+
+    // Create dots
+    for (let i = 0; i < DOT_COUNT; i++) {
+      dots.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5,
+        radius: Math.random() * 2 + 1
+      });
+    }
+
+    const animate = () => {
+      ctx.clearRect(0, 0, width, height);
+
+      // Update and draw dots
+      dots.forEach(dot => {
+        // Move dot
+        dot.x += dot.vx;
+        dot.y += dot.vy;
+
+        // Bounce off edges
+        if (dot.x < 0 || dot.x > width) dot.vx *= -1;
+        if (dot.y < 0 || dot.y > height) dot.vy *= -1;
+
+        // Mouse interaction
+        if (mouse.x !== null && mouse.y !== null) {
+          const dx = mouse.x - dot.x;
+          const dy = mouse.y - dot.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 200) {
+            dot.x -= dx * 0.02;
+            dot.y -= dy * 0.02;
+          }
+        }
+
+        // Draw dot
+        ctx.beginPath();
+        ctx.arc(dot.x, dot.y, dot.radius, 0, Math.PI * 2);
+        ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#6366f1';
+        ctx.globalAlpha = 0.5;
+        ctx.fill();
+      });
+
+      // Draw connections between nearby dots
+      ctx.globalAlpha = 0.15;
+      ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#6366f1';
+      ctx.lineWidth = 1;
+
+      for (let i = 0; i < dots.length; i++) {
+        for (let j = i + 1; j < dots.length; j++) {
+          const dx = dots[i].x - dots[j].x;
+          const dy = dots[i].y - dots[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < CONNECTION_DIST) {
+            ctx.globalAlpha = 0.15 * (1 - dist / CONNECTION_DIST);
+            ctx.beginPath();
+            ctx.moveTo(dots[i].x, dots[i].y);
+            ctx.lineTo(dots[j].x, dots[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      ctx.globalAlpha = 1;
+      requestAnimationFrame(animate);
+    };
+
+    animate();
+  },
+
+  /**
    * Update visual state of filter buttons
    */
   updateFilterButtons() {
@@ -312,10 +399,7 @@ const App = {
       b.classList.toggle('filter-btn--active', b.dataset.category === Filters.activeCategory);
     });
 
-    // Keep active tags consistent
-    this.tagsContainer.querySelectorAll('.tag-btn').forEach(b => {
-      b.classList.toggle('tag-btn--active', Filters.activeTags.includes(b.dataset.tag));
-    });
+    // Tags removed from UI
   }
 };
 

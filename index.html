@@ -24,6 +24,16 @@
   <!-- CSS -->
   <link rel="stylesheet" href="src/styles/main.css">
 
+  <!-- Interactive Background Canvas -->
+  <style>
+    #bgCanvas {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+    }
+  </style>
+
   <!-- Favicon (emoji-based para simplicidade) -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💼</text></svg>">
 </head>
@@ -52,6 +62,8 @@
   <!-- ============================================
        MAIN CONTENT
        ============================================ -->
+  <canvas id="bgCanvas" aria-hidden="true"></canvas>
+
   <main role="main">
 
     <!-- Home Page -->
@@ -83,8 +95,8 @@
           <!-- Renderizado por JavaScript -->
         </div>
 
-        <div id="tagsContainer" class="filters__tags" role="group" aria-label="Filtrar por tecnologia">
-          <!-- Renderizado por JavaScript -->
+        <div id="tagsContainer" class="filters__tags" role="group" aria-label="Filtrar por tecnologia" style="display:none;">
+          <!-- Tags removed for cleaner UI -->
         </div>
 
         <p id="projectsCount" class="filters__count">

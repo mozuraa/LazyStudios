@@ -1,61 +1,27 @@
-# Meu Portfólio Site
+# 👋 Lazy Studios
 
-Repositório central para todos os meus projetos pessoais. Site estático com cards de projetos, downloads, pesquisa e filtros.
+I'm a developer who builds practical applications, tools, and experiments. This portfolio is my central hub — a place to explore, download, and try my work.
 
-## 🚀 Stack
+## 🛠️ Tech Stack
 
-- **Frontend:** HTML + CSS + JavaScript (Vanilla JS)
-- **Hospedagem:** Vercel
-- **CI/CD:** GitHub Actions → Vercel
-- **Dados:** Ficheiros JSON
+| Area | Technologies |
+|------|--------------|
+| **Frontend** | HTML5, CSS3, JavaScript (ES6+) |
+| **Styling** | Custom CSS with CSS Variables, Flexbox, Grid |
+| **Animations** | CSS Transitions, Intersection Observer API |
+| **Tools** | Git, GitHub, Vercel, Render |
 
-## 📁 Estrutura
+## 🚀 Key Projects
 
-```
-meu-portfolio-site/
-├── public/downloads/      # Ficheiros para download (APK, PDF, etc.)
-├── public/images/projects/# Screenshots dos projetos
-├── src/
-│   ├── data/projects.json # Base de dados dos projetos
-│   ├── styles/main.css    # Estilos
-│   └── js/                # JavaScript modular
-├── index.html             # SPA - página principal
-└── vercel.json            # Configuração de deploy
-```
+### Lazy Notes
+Android note-taking app with material design.
 
-## 🛠️ Desenvolvimento Local
+### PDF Tools
+Command-line utility for PDF manipulation.
 
-```bash
-# Opção 1: Live Server (recomendado)
-npm run dev
+### TaskFlow
+Task management web application.
 
-# Opção 2: HTTP Server
-npm start
-```
+---
 
-Depois abre [http://localhost:3000](http://localhost:3000).
-
-## 📦 Adicionar Projetos
-
-Edita `src/data/projects.json` com a estrutura:
-
-```json
-{
-  "id": "meu-projeto",
-  "title": "Meu Projeto",
-  "category": "app|web|file|other",
-  "tags": ["tag1", "tag2"],
-  "downloads": [
-    { "label": "APK", "url": "/downloads/apps/ficheiro.apk", "size": "4.2 MB" }
-  ]
-}
-```
-
-## ☕ Apoiar
-
-Se gostaste de algum projeto, considera apoiar:
-[https://buymeacoffee.com/oseulink](https://buymeacoffee.com/oseulink)
-
-## 📄 Licença
-
-MIT
+*Built with curiosity and too much coffee. Explore the live site to see more.*
