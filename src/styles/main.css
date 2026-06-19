@@ -763,7 +763,7 @@ img {
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--text-secondary);
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   cursor: pointer;
   transition: all var(--transition);
   background: none;
@@ -776,6 +776,29 @@ img {
   color: var(--accent);
   background: var(--accent-light);
   transform: translateX(-4px);
+}
+
+.project-detail__home-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 2rem;
+  margin-left: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: all var(--transition);
+  background: var(--accent-light);
+  text-decoration: none;
+}
+
+.project-detail__home-btn:hover {
+  background: var(--accent);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--accent-glow);
 }
 
 .project-detail__header {

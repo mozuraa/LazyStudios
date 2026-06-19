@@ -136,6 +136,9 @@ const Renderer = {
         <button class="project-detail__back" id="backBtn">
           <i class="fa-solid fa-arrow-left"></i> Back
         </button>
+        <a href="https://lazy-studios.vercel.app/" target="_blank" rel="noopener" class="project-detail__home-btn">
+          <i class="fa-solid fa-house"></i> Home
+        </a>
 
         <div class="project-detail__header">
           <div class="project-detail__category">
