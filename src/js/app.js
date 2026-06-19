@@ -42,12 +42,6 @@ const App = {
     // Setup event listeners
     this.setupEventListeners();
 
-    // Animate stats counters
-    this.animateStats();
-
-    // Setup scroll reveal animations
-    this.setupScrollReveal();
-
     // Initialize interactive background
     this.initBackground();
 
@@ -218,77 +212,8 @@ const App = {
   },
 
   /**
-   * Animate stats counters when they come into view
-   */
-  animateStats() {
-    const statCards = document.querySelectorAll('.stat-card');
-    if (!statCards.length) return;
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const card = entry.target;
-          const target = parseInt(card.dataset.target) || 0;
-          const suffix = card.dataset.suffix || '';
-          const valueEl = card.querySelector('.stat-card__value');
-
-          // Animate from 0 to target
-          let current = 0;
-          const duration = 1500;
-          const steps = 60;
-          const increment = target / steps;
-          const stepTime = duration / steps;
-
-          const timer = setInterval(() => {
-            current += increment;
-            if (current >= target) {
-              current = target;
-              clearInterval(timer);
-            }
-            valueEl.textContent = Math.floor(current) + suffix;
-          }, stepTime);
-
-          observer.unobserve(card);
-        }
-      });
-    }, { threshold: 0.5 });
-
-    statCards.forEach(card => observer.observe(card));
-  },
-
-  /**
-   * Setup scroll-triggered reveal animations
-   */
-  setupScrollReveal() {
-    const sections = document.querySelectorAll('.projects, .stats, .filters');
-    if (!sections.length) return;
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.style.opacity = '1';
-          entry.target.style.transform = 'translateY(0)';
-        }
-      });
-    }, { threshold: 0.1 });
-
-    sections.forEach(section => {
-      section.style.opacity = '0';
-      section.style.transform = 'translateY(20px)';
-      section.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
-      observer.observe(section);
-    });
-
-    // Immediately show hero section
-    const hero = document.querySelector('.hero');
-    if (hero) {
-      hero.style.opacity = '1';
-      hero.style.transform = 'translateY(0)';
-    }
-  },
-
-  /**
-   * Interactive mouse-following dots background
+   * Interactive background with cursor reveal
+   * Dots appear only within a circular radius around the mouse
    */
   initBackground() {
     const canvas = document.getElementById('bgCanvas');
@@ -298,17 +223,41 @@ const App = {
     let width, height;
     let mouse = { x: null, y: null };
     const dots = [];
-    const DOT_COUNT = 50;
-    const CONNECTION_DIST = 150;
+    const GRID_SIZE = 40;
+    const REVEAL_RADIUS = 180;
+
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const dotColor = isDark ? '129, 140, 248' : '99, 102, 241';
 
     const resize = () => {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
+      initDots();
     };
+
+    const initDots = () => {
+      dots.length = 0;
+      const cols = Math.ceil(width / GRID_SIZE);
+      const rows = Math.ceil(height / GRID_SIZE);
+      
+      for (let i = 0; i < cols; i++) {
+        for (let j = 0; j < rows; j++) {
+          dots.push({
+            x: i * GRID_SIZE + GRID_SIZE / 2,
+            y: j * GRID_SIZE + GRID_SIZE / 2,
+            baseX: i * GRID_SIZE + GRID_SIZE / 2,
+            baseY: j * GRID_SIZE + GRID_SIZE / 2,
+            radius: Math.random() * 2 + 1,
+            phase: Math.random() * Math.PI * 2
+          });
+        }
+      }
+    };
+
     resize();
     window.addEventListener('resize', resize);
 
-    // Track mouse position
+    // Track mouse
     window.addEventListener('mousemove', (e) => {
       mouse.x = e.clientX;
       mouse.y = e.clientY;
@@ -319,71 +268,69 @@ const App = {
       mouse.y = null;
     });
 
-    // Create dots
-    for (let i = 0; i < DOT_COUNT; i++) {
-      dots.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.5,
-        vy: (Math.random() - 0.5) * 0.5,
-        radius: Math.random() * 2 + 1
-      });
-    }
-
+    let time = 0;
     const animate = () => {
       ctx.clearRect(0, 0, width, height);
+      time += 0.02;
 
-      // Update and draw dots
       dots.forEach(dot => {
-        // Move dot
-        dot.x += dot.vx;
-        dot.y += dot.vy;
+        // Gentle floating animation
+        const floatX = Math.sin(time + dot.phase) * 3;
+        const floatY = Math.cos(time + dot.phase) * 3;
+        dot.x = dot.baseX + floatX;
+        dot.y = dot.baseY + floatY;
 
-        // Bounce off edges
-        if (dot.x < 0 || dot.x > width) dot.vx *= -1;
-        if (dot.y < 0 || dot.y > height) dot.vy *= -1;
-
-        // Mouse interaction
+        // Calculate distance to mouse
+        let alpha = 0;
         if (mouse.x !== null && mouse.y !== null) {
           const dx = mouse.x - dot.x;
           const dy = mouse.y - dot.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 200) {
-            dot.x -= dx * 0.02;
-            dot.y -= dy * 0.02;
+
+          if (dist < REVEAL_RADIUS) {
+            alpha = 1 - (dist / REVEAL_RADIUS);
+            // Subtle attraction to mouse
+            dot.x += dx * 0.03 * alpha;
+            dot.y += dy * 0.03 * alpha;
           }
         }
 
         // Draw dot
         ctx.beginPath();
         ctx.arc(dot.x, dot.y, dot.radius, 0, Math.PI * 2);
-        ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#6366f1';
-        ctx.globalAlpha = 0.5;
+        ctx.fillStyle = `rgba(${dotColor}, ${alpha * 0.7})`;
         ctx.fill();
-      });
 
-      // Draw connections between nearby dots
-      ctx.globalAlpha = 0.15;
-      ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#6366f1';
-      ctx.lineWidth = 1;
-
-      for (let i = 0; i < dots.length; i++) {
-        for (let j = i + 1; j < dots.length; j++) {
-          const dx = dots[i].x - dots[j].x;
-          const dy = dots[i].y - dots[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-
-          if (dist < CONNECTION_DIST) {
-            ctx.globalAlpha = 0.15 * (1 - dist / CONNECTION_DIST);
-            ctx.beginPath();
-            ctx.moveTo(dots[i].x, dots[i].y);
-            ctx.lineTo(dots[j].x, dots[j].y);
-            ctx.stroke();
+        // Draw connections only for nearby dots (within reveal radius)
+        if (alpha > 0.3) {
+          ctx.strokeStyle = `rgba(${dotColor}, ${alpha * 0.2})`;
+          ctx.lineWidth = 1;
+          
+          // Connect to mouse if close
+          if (mouse.x !== null && mouse.y !== null) {
+            const dx = mouse.x - dot.x;
+            const dy = mouse.y - dot.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            
+            if (dist < REVEAL_RADIUS * 0.8) {
+              ctx.beginPath();
+              ctx.moveTo(dot.x, dot.y);
+              ctx.lineTo(mouse.x, mouse.y);
+              ctx.stroke();
+            }
           }
         }
+      });
+
+      // Draw cursor glow
+      if (mouse.x !== null && mouse.y !== null) {
+        const gradient = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, REVEAL_RADIUS);
+        gradient.addColorStop(0, `rgba(${dotColor}, 0.05)`);
+        gradient.addColorStop(1, `rgba(${dotColor}, 0)`);
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, width, height);
       }
 
-      ctx.globalAlpha = 1;
       requestAnimationFrame(animate);
     };
 

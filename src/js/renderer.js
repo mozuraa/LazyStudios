@@ -49,8 +49,13 @@ const Renderer = {
           <p class="project-card__subtitle">${Utils.escapeHTML(project.subtitle)}</p>
           <div class="project-card__tags">${tagsHtml}</div>
           <div class="project-card__footer">
-            <span class="project-card__status ${statusClass}">${statusLabel}</span>
-            <span class="project-card__date">${Utils.formatDate(project.date)}</span>
+            <a href="#/project/${project.id}" class="project-card__view-btn">
+              View <i class="fa-solid fa-arrow-right"></i>
+            </a>
+            <div class="project-card__meta">
+              <span class="project-card__status ${statusClass}">${statusLabel}</span>
+              <span class="project-card__date">${Utils.formatDate(project.date)}</span>
+            </div>
           </div>
         </div>
       </article>
@@ -74,7 +79,7 @@ const Renderer = {
 
     let actionsHtml = '';
     if (project.links.demo) {
-      actionsHtml += `<a href="${Utils.escapeHTML(project.links.demo)}" target="_blank" rel="noopener" class="btn btn--primary"><i class="fa-solid fa-rocket"></i> Open Demo</a>`;
+      actionsHtml += `<a href="${Utils.escapeHTML(project.links.demo)}" target="_blank" rel="noopener" class="btn btn--primary"><i class="fa-solid fa-arrow-up-right-from-square"></i> Visit Site</a>`;
     }
     if (project.links.source) {
       actionsHtml += `<a href="${Utils.escapeHTML(project.links.source)}" target="_blank" rel="noopener" class="btn btn--secondary"><i class="fa-brands fa-github"></i> Source Code</a>`;
