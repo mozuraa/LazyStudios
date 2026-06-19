@@ -1,0 +1,13 @@
+{
+  "name": "meu-portfolio-site",
+  "version": "1.0.0",
+  "description": "Portfolio pessoal - repositório central de projetos",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx live-server --port=3000",
+    "start": "npx http-server . -p 3000 -c-1"
+  },
+  "keywords": ["portfolio", "projects", "downloads"],
+  "author": "",
+  "license": "MIT"
+}

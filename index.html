@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-PT" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Portfolio pessoal - Repositório central de projetos">
+  <meta name="author" content="Rafael">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Meu Portfólio">
+  <meta property="og:description" content="Repositório central de projetos">
+  <meta property="og:type" content="website">
+
+  <title>Meu Portfólio</title>
+
+  <!-- Font Awesome 6 (CDN) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="src/styles/main.css">
+
+  <!-- Favicon (emoji-based para simplicidade) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💼</text></svg>">
+</head>
+<body>
+
+  <!-- ============================================
+       HEADER
+       ============================================ -->
+  <header class="header" role="banner">
+    <div class="header__container">
+      <a href="#/" class="header__logo" aria-label="Ir para página inicial">
+        <span class="header__logo-icon">L</span>
+        <span>Lazy Studios</span>
+      </a>
+      <nav class="header__nav" role="navigation" aria-label="Navegação principal">
+        <a href="#/" class="header__nav-link">Projetos</a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Alternar modo escuro/claro">
+          <i class="fa-solid fa-moon"></i>
+          <span class="theme-toggle__label">Escuro</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ============================================
+       MAIN CONTENT
+       ============================================ -->
+  <main role="main">
+
+    <!-- Home Page -->
+    <div id="mainContent">
+
+      <!-- Hero Section -->
+      <section class="hero">
+        <h1 class="hero__title">Os Meus Projetos</h1>
+        <p class="hero__subtitle">
+          Repositório central de todas as aplicações, ferramentas e projetos.
+          Explora, faz download ou abre as demos online.
+        </p>
+      </section>
+
+      <!-- Search & Filters -->
+      <section class="filters" aria-label="Filtros de pesquisa">
+        <div class="filters__search">
+          <i class="fa-solid fa-search filters__search-icon"></i>
+          <input
+            type="text"
+            id="searchInput"
+            class="filters__search-input"
+            placeholder="Pesquisar projetos por nome, descrição ou tecnologia..."
+            aria-label="Pesquisar projetos"
+          >
+        </div>
+
+        <div id="categoriesContainer" class="filters__categories" role="group" aria-label="Filtrar por categoria">
+          <!-- Renderizado por JavaScript -->
+        </div>
+
+        <div id="tagsContainer" class="filters__tags" role="group" aria-label="Filtrar por tecnologia">
+          <!-- Renderizado por JavaScript -->
+        </div>
+
+        <p id="projectsCount" class="filters__count">
+          <!-- Renderizado por JavaScript -->
+        </p>
+      </section>
+
+      <!-- Projects Grid -->
+      <section class="projects" aria-label="Lista de projetos">
+        <div id="projectsGrid" class="projects__grid">
+          <!-- Renderizado por JavaScript -->
+          <div class="loading">
+            <div class="loading__spinner" role="status" aria-label="A carregar..."></div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Project Detail -->
+    <div id="detailContainer">
+      <!-- Renderizado por JavaScript -->
+    </div>
+
+  </main>
+
+  <!-- ============================================
+       FOOTER
+       ============================================ -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer__container">
+      <div class="footer__social">
+        <a href="https://github.com/rafael" target="_blank" rel="noopener" class="footer__social-link" aria-label="GitHub">
+          <i class="fa-brands fa-github"></i>
+        </a>
+        <a href="https://linkedin.com/in/rafael" target="_blank" rel="noopener" class="footer__social-link" aria-label="LinkedIn">
+          <i class="fa-brands fa-linkedin-in"></i>
+        </a>
+        <a href="https://youtube.com/@rafael" target="_blank" rel="noopener" class="footer__social-link" aria-label="YouTube">
+          <i class="fa-brands fa-youtube"></i>
+        </a>
+        <a href="mailto:rafael@email.com" class="footer__social-link" aria-label="Email">
+          <i class="fa-solid fa-envelope"></i>
+        </a>
+      </div>
+
+      <!-- Buy Me a Coffee -->
+      <a href="https://buymeacoffee.com/oseulink" target="_blank" rel="noopener" class="footer__coffee" aria-label="Apoiar com Buy Me a Coffee">
+        <i class="fa-solid fa-mug-hot"></i>
+        Buy Me a Coffee
+      </a>
+
+      <p class="footer__copyright">
+        &copy; <span id="currentYear"></span> Lazy Studios. Todos os direitos reservados.
+      </p>
+    </div>
+  </footer>
+
+  <!-- ============================================
+       SCRIPTS
+       ============================================ -->
+  <script type="module" src="src/js/app.js"></script>
+
+  <script>
+    // Atualizar ano automaticamente no footer
+    document.getElementById('currentYear').textContent = new Date().getFullYear();
+  </script>
+
+</body>
+</html>

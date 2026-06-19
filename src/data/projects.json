@@ -1,0 +1,100 @@
+[
+  {
+    "id": "lazy-notes",
+    "title": "Lazy Notes",
+    "subtitle": "App de notas minimalista e offline",
+    "description": "Uma aplicação Android simples para criar, editar e organizar notas pessoais com pesquisa instantânea e modo escuro.",
+    "longDescription": "## Sobre\n\n**Lazy Notes** é uma aplicação Android desenvolvida em Kotlin que permite criar e organizar notas de forma simples e rápida.\n\n### Funcionalidades\n- Criação e edição de notas offline\n- Pesquisa instantânea por título ou conteúdo\n- Modo escuro automático\n- Backup para Google Drive\n- Interface Material Design 3\n- Sem anúncios, sem tracking",
+    "category": "app",
+    "tags": ["kotlin", "android", "material-design", "room", "jetpack-compose"],
+    "thumbnail": "/images/projects/lazy-notes.png",
+    "links": {
+      "demo": "",
+      "source": "https://github.com/rafael/lazy-notes",
+      "video": ""
+    },
+    "downloads": [
+      {
+        "label": "APK (Android)",
+        "url": "/downloads/apps/lazy-notes-v1.0.0.apk",
+        "icon": "android",
+        "size": "4.2 MB"
+      }
+    ],
+    "features": [
+      "Criação de notas offline",
+      "Pesquisa instantânea",
+      "Modo escuro automático",
+      "Backup Google Drive",
+      "Material Design 3",
+      "0 anúncios"
+    ],
+    "status": "active",
+    "date": "2025-12-01"
+  },
+  {
+    "id": "taskflow-web",
+    "title": "TaskFlow",
+    "subtitle": "Gestor de tarefas colaborativo",
+    "description": "Plataforma web para gestão de tarefas em equipa com kanban, calendário e notificações em tempo real.",
+    "longDescription": "## Sobre\n\n**TaskFlow** é uma aplicação web desenvolvida com React e Node.js para gestão de projetos e tarefas em equipa.\n\n### Funcionalidades\n- Quadro Kanban drag-and-drop\n- Calendário integrado\n- Notificações em tempo real (WebSocket)\n- Autenticação OAuth2 (Google, GitHub)\n- API RESTful documentada\n- Modo escuro/claro",
+    "category": "web",
+    "tags": ["react", "nodejs", "socket-io", "mongodb", "tailwindcss"],
+    "thumbnail": "/images/projects/taskflow.png",
+    "links": {
+      "demo": "https://taskflow-demo.vercel.app",
+      "source": "https://github.com/rafael/taskflow",
+      "video": ""
+    },
+    "downloads": [],
+    "features": [
+      "Kanban drag-and-drop",
+      "Calendário integrado",
+      "Notificações em tempo real",
+      "Autenticação OAuth2",
+      "API RESTful",
+      "Modo escuro"
+    ],
+    "status": "active",
+    "date": "2025-10-15"
+  },
+  {
+    "id": "pdf-tools",
+    "title": "PDF Tools",
+    "subtitle": "Coleção de utilitários para PDF",
+    "description": "Conjunto de scripts e ferramentas para manipular ficheiros PDF: merge, split, compress e extrair texto.",
+    "longDescription": "## Sobre\n\n**PDF Tools** é uma coleção de utilitários open-source para manipulação de ficheiros PDF, desenvolvidos em Python.\n\n### Ferramentas incluídas\n- **pdf-merge.py** — Junta múltiplos PDFs num único ficheiro\n- **pdf-split.py** — Divide um PDF em páginas individuais\n- **pdf-compress.py** — Comprime PDFs reduzindo o tamanho\n- **pdf-extract.py** — Extrai texto de PDFs para TXT\n\nTodas as ferramentas funcionam via linha de comandos e suportam tanto Python 3.8+ como executáveis standalone.",
+    "category": "file",
+    "tags": ["python", "pdf", "automation", "cli"],
+    "thumbnail": "/images/projects/pdf-tools.png",
+    "links": {
+      "demo": "",
+      "source": "https://github.com/rafael/pdf-tools",
+      "video": ""
+    },
+    "downloads": [
+      {
+        "label": "ZIP (Todos os scripts)",
+        "url": "/downloads/documents/pdf-tools-v2.0.0.zip",
+        "icon": "file-archive",
+        "size": "1.8 MB"
+      },
+      {
+        "label": "Manual (PDF)",
+        "url": "/downloads/documents/pdf-tools-manual.pdf",
+        "icon": "file-pdf",
+        "size": "850 KB"
+      }
+    ],
+    "features": [
+      "Merge de PDFs",
+      "Split de PDFs",
+      "Compressão",
+      "Extração de texto",
+      "CLI simples",
+      "Open-source"
+    ],
+    "status": "active",
+    "date": "2025-08-20"
+  }
+]
